@@ -18,8 +18,9 @@ export default function MainAppBottomTabs() {
     <Tab.Navigator
     screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: AppColors.primary,
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: AppColors.black,
+        tabBarInactiveTintColor: AppColors.textGrey,
+        tabBarShowLabel: false,
     }}
     >
 

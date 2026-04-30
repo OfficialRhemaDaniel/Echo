@@ -9,8 +9,8 @@ import { useFonts } from 'expo-font';
 export default function App() {
 
   const [fontsLoaded] = useFonts({
-    "Nunito-Bold": require("./src/assets/fonts/Poppins-Regular.ttf"),
-    "Nunito-Medium": require("./src/assets/fonts/Poppins-SemiBold.ttf"),
+    "Poppins-Regular": require("./src/assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-SemiBold": require("./src/assets/fonts/Poppins-SemiBold.ttf"),
   });
 
   if (!fontsLoaded) {
