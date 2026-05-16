@@ -21,13 +21,13 @@ export default AppText
 const styles = StyleSheet.create({
     bold: {
         fontSize: s(16),
-        fontWeight: 'bold',
+        fontFamily: 'Poppins-SemiBold',
         color: 'black',
     },
 
     medium: {
     fontSize: s(16),
-    fontWeight: 'medium',
+    fontFamily: 'Poppins-Regular',
     color: 'black',
   }
 })

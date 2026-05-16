@@ -44,9 +44,9 @@ export default AppInputText
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: AppColors.redGrey,
         width: '100%',
-        height: vs(45),
+        backgroundColor: AppColors.redGrey,
+        height: vs(40),
         borderRadius: s(10),
         justifyContent: 'center',
         paddingLeft: s(20),

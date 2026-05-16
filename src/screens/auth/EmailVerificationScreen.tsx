@@ -1,14 +1,71 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { s, vs } from "react-native-size-matters";
+import AppButton from "../../components/buttons/AppButton";
+import AuthInputField from "../../components/inputs/AuthInputField";
+import AppText from "../../components/texts/AppText";
+import { AppColors } from "../../styles/colors";
+import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
+import { useNavigation } from "@react-navigation/native";
 
 const EmailVerificationScreen = () => {
+  const navigation = useNavigation<any>()
+  const [email, setEmail] = useState("");
+
   return (
-    <View>
-      <Text>EmailVerificationScreen</Text>
-    </View>
-  )
-}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/illustrations/verifyEmailIllustration.png")}
+          resizeMode="contain"
+        />
 
-export default EmailVerificationScreen
+        <AppText variant="bold" style={styles.title}>
+          Verify Email
+        </AppText>
 
-const styles = StyleSheet.create({})
+        <View style={styles.formContainer}>
+          <AuthInputField
+            label="Input your Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="example@example.com"
+            keyboardType="email-address"
+            inputStyle={styles.Input}
+          />
+
+          <AppButton title="Verify your Email" onPress={() => navigation.navigate("EmailVerified")}/>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default EmailVerificationScreen;
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: AppColors.white,
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: AppColors.white,
+    paddingTop: vs(100),
+  },
+  title: {
+    marginTop: vs(22),
+    marginBottom: vs(34),
+    fontSize: s(24),
+    color: AppColors.black,
+  },
+  formContainer: {
+    width: "100%",
+    paddingHorizontal: SharedPaddingHorizontal,
+  },
+  Input: {
+    marginBottom: vs(50)
+  }
+});

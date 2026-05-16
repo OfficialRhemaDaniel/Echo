@@ -1,22 +1,31 @@
-import { StyleSheet } from 'react-native'
+import { FlatList, StyleSheet } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import AppText from '../../components/texts/AppText'
-import AppButton from '../../components/buttons/AppButton'
-import AppInputText from '../../components/inputs/AppInputText'
 import { AppColors } from '../../styles/colors'
+import AppHeader from '../../components/headers/AppHeader'
+import EchoComponent from '../../components/echos/EchoComponent'
+import { echos } from '../../data/Echos'
+import NewEchoButton from '../../components/buttons/NewEchoButton'
 
 const homeScreen = () => {
   return (
-    <SafeAreaView style={{backgroundColor: AppColors.white, flex: 1}}>
-      <AppText variant='medium'>Home Text</AppText>
-      <AppText variant='bold'>Home Text</AppText>
-      <AppButton title='Hello'/>
-      <AppInputText placeholder="example@example.com"/>
+    <SafeAreaView style={styles.container}>
+      <AppHeader/>
+      <FlatList
+        data={echos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <EchoComponent echo={item} />}
+      />
+      <NewEchoButton />
     </SafeAreaView>
   )
 }
 
 export default homeScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: AppColors.white,
+    flex: 1,
+  },
+})
