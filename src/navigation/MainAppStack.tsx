@@ -3,6 +3,7 @@ import React from "react";
 import AuthStack from "./AuthStack";
 import MainAppBottomTabs from "./MainAppBottomTabs";
 import ProfileScreen from "../screens/profile/ProfileScreen";
+import SearchResults from "../screens/search/SearchResults";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export default function MainAppStack () {
                     title: "Profile",
                 }}
             />
+            <Stack.Screen name="SearchResults" component={SearchResults}/>
         </Stack.Navigator>
     )
 }

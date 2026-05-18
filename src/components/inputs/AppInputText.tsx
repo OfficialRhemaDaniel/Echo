@@ -1,20 +1,17 @@
 import {
-  KeyboardTypeOptions,
   StyleSheet,
   TextStyle,
+  TextInput,
+  TextInputProps,
   ViewStyle,
 } from 'react-native'
 import React from 'react'
 import { AppColors } from '../../styles/colors'
 import { s, vs } from 'react-native-size-matters'
-import { TextInput } from 'react-native-gesture-handler'
 
-interface AppInputTextProps {
+interface AppInputTextProps extends Omit<TextInputProps, 'style' | 'value' | 'onChangeText'> {
   value: string;
   onChangeText: (text: string) => void;
-  placeholder?: string;
-  secureTextEntry?: boolean;
-  keyboardType?: KeyboardTypeOptions;
   containerStyle?: ViewStyle | ViewStyle[];
   inputStyle?: TextStyle | TextStyle[];
 }
@@ -22,18 +19,15 @@ interface AppInputTextProps {
 const AppInputText = ({
   value,
   onChangeText,
-  placeholder,
-  secureTextEntry,
-  keyboardType,
+  containerStyle,
   inputStyle,
+  ...textInputProps
 }: AppInputTextProps) => {
   return (
     <TextInput
     value={value}
     onChangeText={onChangeText}
-    placeholder={placeholder}
-    secureTextEntry={secureTextEntry}
-    keyboardType={keyboardType}
+    {...textInputProps}
     style={[styles.container, inputStyle]}
     placeholderTextColor={AppColors.textGrey}
     />

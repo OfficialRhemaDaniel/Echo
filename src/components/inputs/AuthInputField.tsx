@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   KeyboardTypeOptions,
+  ReturnKeyTypeOptions,
   StyleSheet,
   TextStyle,
   View,
@@ -20,6 +21,8 @@ interface AuthInputFieldProps {
   keyboardType?: KeyboardTypeOptions
   containerStyle?: ViewStyle | ViewStyle[]
   inputStyle?: TextStyle | TextStyle[]
+  returnKeyType?: ReturnKeyTypeOptions
+  onSubmitEditing?: () => void
 }
 
 const AuthInputField = ({
@@ -31,6 +34,8 @@ const AuthInputField = ({
   keyboardType,
   containerStyle,
   inputStyle,
+  returnKeyType,
+  onSubmitEditing,
 }: AuthInputFieldProps) => {
   return (
     <View style={[styles.inputGroup, containerStyle]}>
@@ -42,6 +47,8 @@ const AuthInputField = ({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         inputStyle={inputStyle}
+        returnKeyType={returnKeyType}
+        onSubmitEditing={onSubmitEditing}
       />
     </View>
   )

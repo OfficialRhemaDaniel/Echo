@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { s, vs } from "react-native-size-matters";
-import { AppColors } from "../styles/colors";
-import { SharedPaddingHorizontal } from "../styles/SharedStyles";
-import AppText from "./texts/AppText";
+import { AppColors } from "../../styles/colors";
+import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
+import AppText from "../texts/AppText";
 
 const profileImage =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpo_rYT0Ltw6rjKlCHa7EDY9ICpBTsRyVVmQ&s";

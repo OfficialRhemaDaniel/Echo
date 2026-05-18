@@ -9,7 +9,7 @@ import NewEchoButton from '../../components/buttons/NewEchoButton'
 
 const homeScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <AppHeader/>
       <FlatList
         data={echos}

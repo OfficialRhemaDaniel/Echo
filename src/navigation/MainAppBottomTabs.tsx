@@ -7,7 +7,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import homeScreen from "../screens/home/homeScreen";
 import searchScreen from "../screens/search/searchScreen";
 import notifications from "../screens/notifications/notifications";
-import chatScreen from "../screens/chats/chatScreen";
+import ChatScreen from "../screens/chats/ChatScreen";
 import { AppColors } from "../styles/colors";
 
 
@@ -52,7 +52,7 @@ export default function MainAppBottomTabs() {
 
         <Tab.Screen 
             name="Chats"
-            component={chatScreen}
+            component={ChatScreen}
             options={{
                 tabBarIcon: ({color, size}) => <MaterialCommunityIcons name="message-text" size={size} color={color} />
             }}

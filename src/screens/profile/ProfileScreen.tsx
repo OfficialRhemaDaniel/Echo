@@ -3,13 +3,13 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NewEchoButton from "../../components/buttons/NewEchoButton";
 import EchoComponent from "../../components/echos/EchoComponent";
-import ProfileHeaderComponent from "../../components/ProfileHeaderComponent";
+import ProfileHeaderComponent from "../../components/headers/ProfileHeaderComponent";
 import { echos } from "../../data/Echos";
 import { AppColors } from "../../styles/colors";
 
 const ProfileScreen = () => {
   return (
-    <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
+    <SafeAreaView style={styles.container} edges={["left", "right"]}>
       <FlatList
         data={echos}
         keyExtractor={(item) => item.id}
