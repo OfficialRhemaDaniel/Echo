@@ -3,7 +3,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { s, vs } from "react-native-size-matters";
 import AppButton from "../../components/buttons/AppButton";
-import AuthInputField from "../../components/inputs/AuthInputField";
+import AppInputText from "../../components/inputs/AppInputText";
 import AppText from "../../components/texts/AppText";
 import { AppColors } from "../../styles/colors";
 import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
@@ -26,14 +26,16 @@ const EmailVerificationScreen = () => {
         </AppText>
 
         <View style={styles.formContainer}>
-          <AuthInputField
-            label="Input your Email"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="example@example.com"
-            keyboardType="email-address"
-            inputStyle={styles.Input}
-          />
+          <View style={styles.inputGroup}>
+            <AppText style={styles.label}>Input your Email</AppText>
+            <AppInputText
+              value={email}
+              onChangeText={setEmail}
+              placeholder="example@example.com"
+              keyboardType="email-address"
+              inputStyle={styles.Input}
+            />
+          </View>
 
           <AppButton title="Verify your Email" onPress={() => navigation.navigate("EmailVerified")}/>
         </View>
@@ -64,6 +66,15 @@ const styles = StyleSheet.create({
   formContainer: {
     width: "100%",
     paddingHorizontal: SharedPaddingHorizontal,
+  },
+  inputGroup: {
+    marginBottom: vs(14),
+    width: "100%",
+  },
+  label: {
+    marginBottom: vs(10),
+    fontSize: s(14),
+    color: AppColors.black,
   },
   Input: {
     marginBottom: vs(50)

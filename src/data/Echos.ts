@@ -9,6 +9,7 @@ export type Echo = {
   likes: string;
   comments: string;
   bookmarks: string;
+  avatarUrl?: string;
   image?: ImageSourcePropType;
 };
 
@@ -22,6 +23,7 @@ export const echos: Echo[] = [
     likes: "14.5k",
     comments: "2.1k",
     bookmarks: "934",
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
   },
   {
     id: "echo-2",
@@ -35,6 +37,7 @@ export const echos: Echo[] = [
     image: {
       uri: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e",
     },
+    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
   },
   {
     id: "echo-3",
@@ -45,6 +48,7 @@ export const echos: Echo[] = [
     likes: "21k",
     comments: "3.8k",
     bookmarks: "5.6k",
+    avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d",
   },
   {
     id: "echo-4",
@@ -55,6 +59,7 @@ export const echos: Echo[] = [
     likes: "5.7k",
     comments: "312",
     bookmarks: "789",
+    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
   },
   {
     id: "echo-5",
@@ -65,5 +70,6 @@ export const echos: Echo[] = [
     likes: "32.4k",
     comments: "4.2k",
     bookmarks: "9.1k",
+    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
   },
 ];

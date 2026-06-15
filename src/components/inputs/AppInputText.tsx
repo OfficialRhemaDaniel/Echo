@@ -8,12 +8,14 @@ import {
 import React from 'react'
 import { AppColors } from '../../styles/colors'
 import { s, vs } from 'react-native-size-matters'
+import { FieldError } from 'react-hook-form'
 
 interface AppInputTextProps extends Omit<TextInputProps, 'style' | 'value' | 'onChangeText'> {
   value: string;
   onChangeText: (text: string) => void;
   containerStyle?: ViewStyle | ViewStyle[];
   inputStyle?: TextStyle | TextStyle[];
+  error?: FieldError;
 }
 
 const AppInputText = ({
@@ -21,6 +23,7 @@ const AppInputText = ({
   onChangeText,
   containerStyle,
   inputStyle,
+  error,
   ...textInputProps
 }: AppInputTextProps) => {
   return (
@@ -28,7 +31,11 @@ const AppInputText = ({
     value={value}
     onChangeText={onChangeText}
     {...textInputProps}
-    style={[styles.container, inputStyle]}
+    style={[
+      styles.container, 
+      inputStyle,
+      error && { borderColor: AppColors.primary, borderWidth: 1 }
+    ]}
     placeholderTextColor={AppColors.textGrey}
     />
   )
@@ -45,5 +52,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingLeft: s(20),
         fontSize: s(12),
-    }
+    },
 })

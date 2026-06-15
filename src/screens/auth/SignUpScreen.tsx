@@ -1,20 +1,35 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Image, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { s, vs } from 'react-native-size-matters'
 import GoogleLogo from '../../assets/GoogleLogo'
 import AppButton from '../../components/buttons/AppButton'
-import AuthInputField from '../../components/inputs/AuthInputField'
 import AppText from '../../components/texts/AppText'
 import { AppColors } from '../../styles/colors'
 import { SharedPaddingHorizontal } from '../../styles/SharedStyles'
+import { useForm } from 'react-hook-form'
+import AppTextInputController from '../../components/inputs/AppTextInputController'
+
+type SignUpFormData = {
+  username: string
+  password: string
+}
 
 const SignUpScreen = () => {
   const navigation = useNavigation<any>()
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+
+  const { control, handleSubmit } = useForm<SignUpFormData>({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
+  const signUp = (formData: SignUpFormData) => {
+    console.log(formData)
+    navigation.navigate('EmailVerification')
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,22 +57,40 @@ const SignUpScreen = () => {
           <AppText style={styles.subtitle}>Get started for free.</AppText>
         </View>
 
-        <AuthInputField
-          label="Username"
-          value={username}
-          onChangeText={setUsername}
-          placeholder="The_Logical_Creative"
-        />
+        <View style={styles.inputGroup}>
+          <AppText style={styles.label}>Username</AppText>
+          <AppTextInputController
+           control={control}
+           name='username'
+           placeholder='Input Username'
+           rules={{
+            required: "Username is required",
+            minLength: {
+              value: 3,
+              message: "Username must be at least 3 characters",
+            },
+           }}
+          />
+        </View>
 
-        <AuthInputField
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="****"
-          secureTextEntry
-        />
+        <View style={styles.inputGroup}>
+          <AppText style={styles.label}>Password</AppText>
+          <AppTextInputController
+            control={control}
+            name='password'
+            placeholder='Password'
+            secureTextEntry
+            rules={{
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
+            }}
+          />
+        </View>
 
-        <AppText style={styles.dividerText}>Or Log in with</AppText>
+        <AppText style={styles.dividerText}>Or Sign up with</AppText>
 
         <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
           <GoogleLogo />
@@ -65,7 +98,7 @@ const SignUpScreen = () => {
 
         <AppButton
           title="Create"
-          onPress={() => navigation.navigate('EmailVerification')}
+          onPress={handleSubmit(signUp)}
         />
       </View>
     </SafeAreaView>
@@ -94,7 +127,7 @@ const styles = StyleSheet.create({
   },
   panelShadow: {
     position: 'absolute',
-    top: vs(235),
+    top: vs(210),
     alignSelf: 'center',
     width: '86%',
     height: vs(60),
@@ -121,6 +154,15 @@ const styles = StyleSheet.create({
     marginTop: vs(4),
     fontSize: s(14),
     color: AppColors.textGrey,
+  },
+  inputGroup: {
+    marginBottom: vs(14),
+    width: '100%',
+  },
+  label: {
+    marginBottom: vs(10),
+    fontSize: s(14),
+    color: AppColors.black,
   },
   dividerText: {
     marginTop: vs(4),

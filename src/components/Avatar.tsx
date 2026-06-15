@@ -4,13 +4,15 @@ import { s } from 'react-native-size-matters'
 
 type AvatarProps = {
   onPress?: () => void;
+  url?: string;
 };
 
-const Avatar = ({ onPress }: AvatarProps) => {
+const Avatar = ({ onPress, url }: AvatarProps) => {
+  const defaultAvatar = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpo_rYT0Ltw6rjKlCHa7EDY9ICpBTsRyVVmQ&s';
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image
-      source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpo_rYT0Ltw6rjKlCHa7EDY9ICpBTsRyVVmQ&s'}}
+      source={{uri: url || defaultAvatar}}
       style={styles.image}
       />
     </TouchableOpacity>
