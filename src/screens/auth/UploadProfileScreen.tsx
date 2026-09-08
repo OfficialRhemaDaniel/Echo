@@ -9,10 +9,15 @@ import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
+import { useOnboarding } from "../../contexts/OnboardingContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const UploadProfileScreen = () => {
   const navigation = useNavigation<any>();
+  const { setProfilePicture, submitOnboarding } = useOnboarding();
+  const { login } = useAuth(); // ADDED
   const [image, setImage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -27,11 +32,29 @@ const UploadProfileScreen = () => {
     }
   };
 
+  const finishOnboarding = async () => {
+    setSubmitting(true);
+    try {
+      setProfilePicture(image);
+      const res = await submitOnboarding();
+      await login(res.user, res.token);
+      navigation.navigate("MainAppBottomTabs");
+    } catch (err: any) {
+      console.log(
+        "Onboarding submit failed:",
+        err?.response?.data || err.message,
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: AppColors.white }}>
       <View style={styles.header}>
         {!image && (
-          <TouchableOpacity onPress={() => navigation.navigate("MainAppBottomTabs")}>
+          <TouchableOpacity onPress={finishOnboarding}>
+            {" "}
             <AppText style={styles.skip}>Skip</AppText>
           </TouchableOpacity>
         )}
@@ -51,11 +74,9 @@ const UploadProfileScreen = () => {
         </TouchableOpacity>
 
         <AppButton
-          title="Continue"
-          disabled={!image}
-          onPress={() =>
-            navigation.navigate("MainAppBottomTabs")
-          }
+          title={submitting ? "Submitting..." : "Continue"}
+          disabled={!image || submitting}
+          onPress={finishOnboarding}
         />
       </View>
     </SafeAreaView>

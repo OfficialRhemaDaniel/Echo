@@ -1,13 +1,14 @@
-import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import MainAppStack from './src/navigation/MainAppStack';
-import { useFonts } from 'expo-font';
+import "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import MainAppStack from "./src/navigation/MainAppStack";
+import { useFonts } from "expo-font";
+import { AuthProvider } from "./src/contexts/AuthContext";
+import { OnboardingProvider } from "./src/contexts/OnboardingContext";
 
 export default function App() {
-
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./src/assets/fonts/Poppins-Regular.ttf"),
     "Poppins-SemiBold": require("./src/assets/fonts/Poppins-SemiBold.ttf"),
@@ -19,9 +20,13 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <MainAppStack/>
-      </NavigationContainer>
+      <AuthProvider>
+        <OnboardingProvider>
+          <NavigationContainer>
+            <MainAppStack />
+          </NavigationContainer>
+        </OnboardingProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
@@ -29,8 +34,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

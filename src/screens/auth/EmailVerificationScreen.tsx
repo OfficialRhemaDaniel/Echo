@@ -8,10 +8,45 @@ import AppText from "../../components/texts/AppText";
 import { AppColors } from "../../styles/colors";
 import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
 import { useNavigation } from "@react-navigation/native";
+import { useOnboarding } from "../../contexts/OnboardingContext";
 
 const EmailVerificationScreen = () => {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
+  const { sendVerificationEmail, data } = useOnboarding();
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleVerify = async () => {
+    if (!email) {
+      setError("Please enter your email");
+      return;
+    }
+
+    console.log(
+      "Would send verification for:",
+      { email },
+      "username is:",
+      {
+        username: data.username,
+      },
+      "with password of",
+      { password: data.password },
+    );
+    navigation.navigate("EmailVerified");
+    setLoading(true);
+    setError("");
+    try {
+      await sendVerificationEmail(email);
+      navigation.navigate("EmailVerified");
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message || "Failed to send verification email",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -37,7 +72,11 @@ const EmailVerificationScreen = () => {
             />
           </View>
 
-          <AppButton title="Verify your Email" onPress={() => navigation.navigate("EmailVerified")}/>
+          <AppButton
+            title={loading ? "Sending..." : "Verify your Email"}
+            onPress={handleVerify}
+            disabled={loading}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -77,6 +116,11 @@ const styles = StyleSheet.create({
     color: AppColors.black,
   },
   Input: {
-    marginBottom: vs(50)
-  }
+    marginBottom: vs(50),
+  },
+  errorText: {
+    color: "red",
+    fontSize: s(12),
+    marginTop: vs(4),
+  },
 });

@@ -16,6 +16,8 @@ import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
 import GoogleLogo from "../../assets/GoogleLogo";
 import AppTextInputController from "../../components/inputs/AppTextInputController";
 import { useForm } from "react-hook-form";
+import api from "../../api/axios";
+import { useAuth } from "../../contexts/AuthContext";
 
 type SignInFormData = {
   email: string;
@@ -24,6 +26,7 @@ type SignInFormData = {
 
 const SignInScreen = () => {
   const navigation = useNavigation<any>();
+  const { login } = useAuth();
 
   const { control, handleSubmit } = useForm<SignInFormData>({
     defaultValues: {
@@ -32,9 +35,15 @@ const SignInScreen = () => {
     },
   });
 
-  const logIn = (formData: SignInFormData) => {
-    console.log(formData);
-    navigation.navigate("MainAppBottomTabs");
+  const logIn = async (formData: SignInFormData) => {
+    try {
+      const res = await api.post("/auth/login", formData);
+      await login(res.data.user, res.data.token);
+      navigation.navigate("MainAppBottomTabs");
+    } catch (err) {
+      console.log(err);
+      // show error to user
+    }
   };
 
   return (
@@ -103,10 +112,7 @@ const SignInScreen = () => {
           <GoogleLogo />
         </TouchableOpacity>
 
-        <AppButton
-          title="Log In"
-          onPress={handleSubmit(logIn)}
-        />
+        <AppButton title="Log In" onPress={handleSubmit(logIn)} />
       </View>
     </SafeAreaView>
   );
