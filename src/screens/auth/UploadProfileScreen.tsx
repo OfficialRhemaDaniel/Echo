@@ -9,13 +9,11 @@ import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
-import { useOnboarding } from "../../contexts/OnboardingContext";
-import { useAuth } from "../../contexts/AuthContext";
+import api from "../../api/axios";
+import { uploadToCloudinary } from "../../api/cloudinary";
 
 const UploadProfileScreen = () => {
   const navigation = useNavigation<any>();
-  const { setProfilePicture, submitOnboarding } = useOnboarding();
-  const { login } = useAuth(); // ADDED
   const [image, setImage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -26,23 +24,26 @@ const UploadProfileScreen = () => {
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
+    if (!result.canceled) setImage(result.assets[0].uri);
   };
 
   const finishOnboarding = async () => {
     setSubmitting(true);
     try {
-      setProfilePicture(image);
-      const res = await submitOnboarding();
-      await login(res.user, res.token);
+      if (image) {
+        const secureUrl = await uploadToCloudinary(image);
+        await api.patch("/users/profile-picture", {
+          profilePicture: secureUrl,
+        });
+      }
+
       navigation.navigate("MainAppBottomTabs");
     } catch (err: any) {
       console.log(
-        "Onboarding submit failed:",
-        err?.response?.data || err.message,
+        "Profile picture upload failed:",
+        err?.response?.data?.error?.message ||
+          err?.response?.data ||
+          err.message,
       );
     } finally {
       setSubmitting(false);
@@ -53,8 +54,9 @@ const UploadProfileScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: AppColors.white }}>
       <View style={styles.header}>
         {!image && (
-          <TouchableOpacity onPress={finishOnboarding}>
-            {" "}
+          <TouchableOpacity
+            onPress={() => navigation.navigate("MainAppBottomTabs")}
+          >
             <AppText style={styles.skip}>Skip</AppText>
           </TouchableOpacity>
         )}
@@ -98,12 +100,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     height: vs(40),
   },
-  skip: {
-    fontSize: s(16),
-  },
-  uploadButton: {
-    alignItems: "center",
-  },
+  skip: { fontSize: s(16) },
+  uploadButton: { alignItems: "center" },
   imageContainer: {
     backgroundColor: AppColors.redGrey,
     width: s(180),
@@ -113,10 +111,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
+  image: { width: "100%", height: "100%" },
   uploadProfileText: {
     color: AppColors.primary,
     paddingTop: vs(24),

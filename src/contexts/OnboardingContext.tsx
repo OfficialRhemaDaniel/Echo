@@ -1,30 +1,44 @@
-// OnboardingContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import api from "../api/axios"; // your configured axios instance
+import {
+  signup,
+  verifyEmail as verifyEmailRequest,
+  sendOtp,
+} from "../api/auth";
+import api from "../api/axios";
 
 interface OnboardingData {
+  userId: string | null;
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   password: string;
-  emailVerified: boolean;
-  profilePicture: string | null; // local uri before upload
+  isEmailVerified: boolean;
+  profilePicture: string | null;
 }
 
 interface OnboardingContextType {
   data: OnboardingData;
-  setSignupInfo: (username: string, email: string, password: string) => void;
-  sendVerificationEmail: (email: string) => Promise<void>;
-  markEmailVerified: () => void;
-  setProfilePicture: (uri: string | null) => void;
-  submitOnboarding: () => Promise<any>; // returns backend user response
+  setNameInfo: (firstName: string, lastName: string) => void;
+  createAccount: (
+    username: string,
+    email: string,
+    password: string,
+  ) => Promise<void>;
+  resendOtp: () => Promise<void>;
+  verifyEmail: (otp: string) => Promise<void>;
+  setProfilePicture: (uri: string | null) => Promise<void>;
   reset: () => void;
 }
 
 const initialState: OnboardingData = {
+  userId: null,
+  firstName: "",
+  lastName: "",
   username: "",
   email: "",
   password: "",
-  emailVerified: false,
+  isEmailVerified: false,
   profilePicture: null,
 };
 
@@ -35,42 +49,64 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<OnboardingData>(initialState);
 
-  const setSignupInfo = (username: string, email: string, password: string) => {
-    setData((prev) => ({ ...prev, username, email, password }));
+  const setNameInfo = (firstName: string, lastName: string) => {
+    setData((prev) => ({ ...prev, firstName, lastName }));
   };
 
-  const sendVerificationEmail = async (email: string) => {
-    await api.post("/auth/send-verification", { email });
-    setData((prev) => ({ ...prev, email }));
+  const createAccount = async (
+    username: string,
+    email: string,
+    password: string,
+  ) => {
+    const user = await signup({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      username,
+      email,
+      password,
+    });
+
+    await sendOtp(user.id);
+
+    setData((prev) => ({
+      ...prev,
+      userId: user.id,
+      username,
+      email,
+      password,
+      isEmailVerified: false,
+    }));
   };
 
-  const markEmailVerified = () => {
-    setData((prev) => ({ ...prev, emailVerified: true }));
+  const resendOtp = async () => {
+    if (!data.userId) return;
+    await sendOtp(data.userId);
   };
 
-  const setProfilePicture = (uri: string | null) => {
-    setData((prev) => ({ ...prev, profilePicture: uri }));
+  const verifyEmail = async (otp: string) => {
+    if (!data.email) return;
+    await verifyEmailRequest(data.email, otp);
+    setData((prev) => ({ ...prev, isEmailVerified: true }));
   };
 
-  const submitOnboarding = async () => {
-    const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-
-    if (data.profilePicture) {
-      formData.append("profilePicture", {
-        uri: data.profilePicture,
-        name: "profile.jpg",
-        type: "image/jpeg",
-      } as any);
+  const setProfilePicture = async (uri: string | null) => {
+    if (!uri) {
+      setData((prev) => ({ ...prev, profilePicture: null }));
+      return;
     }
 
-    const res = await api.post("/auth/complete-signup", formData, {
+    const formData = new FormData();
+    formData.append("profilePicture", {
+      uri,
+      name: "profile.jpg",
+      type: "image/jpeg",
+    } as any);
+
+    await api.patch("/users/profile-picture", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    return res.data; // pass this into AuthContext.login()
+    setData((prev) => ({ ...prev, profilePicture: uri }));
   };
 
   const reset = () => setData(initialState);
@@ -79,11 +115,11 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     <OnboardingContext.Provider
       value={{
         data,
-        setSignupInfo,
-        sendVerificationEmail,
-        markEmailVerified,
+        setNameInfo,
+        createAccount,
+        resendOtp,
+        verifyEmail,
         setProfilePicture,
-        submitOnboarding,
         reset,
       }}
     >

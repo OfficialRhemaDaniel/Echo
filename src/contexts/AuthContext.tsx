@@ -1,4 +1,3 @@
-// AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -52,7 +51,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("user");
     delete api.defaults.headers.common.Authorization;
-    setUser(null);
   };
 
   return (

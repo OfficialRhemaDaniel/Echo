@@ -1,6 +1,8 @@
 import React from "react";
 import {
   Image,
+  KeyboardAvoidingView,
+  Platform,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
@@ -17,95 +19,108 @@ import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
 import { useForm } from "react-hook-form";
 import AppTextInputController from "../../components/inputs/AppTextInputController";
 import { useOnboarding } from "../../contexts/OnboardingContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 type SignUpFormData = {
-  username: string;
-  password: string;
+  firstName: string;
+  lastName: string;
 };
 
 const SignUpScreen = () => {
   const navigation = useNavigation<any>();
-  const { setSignupInfo } = useOnboarding();
+  const { setNameInfo } = useOnboarding();
 
   const { control, handleSubmit } = useForm<SignUpFormData>({
     defaultValues: {
-      username: "",
-      password: "",
+      firstName: "",
+      lastName: "",
     },
   });
 
   const signUp = (formData: SignUpFormData) => {
-    setSignupInfo(formData.username, "", formData.password);
-    navigation.navigate("EmailVerification");
+    setNameInfo(formData.firstName, formData.lastName);
+    navigation.navigate("OtherDetails");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={AppColors.primary} />
-      <View style={styles.header}>
-        <Image source={require("../../assets/Echo_Logo.png")} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <Image source={require("../../assets/Echo_Logo.png")} />
 
-        <View style={styles.loginRow}>
-          <AppText style={styles.loginText}>Already have an account? </AppText>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-            <AppText variant="bold" style={styles.loginText}>
-              Log In
-            </AppText>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <View style={styles.loginRow}>
+              <AppText style={styles.loginText}>
+                Already have an account?{" "}
+              </AppText>
+              <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+                <AppText variant="bold" style={styles.loginText}>
+                  Log In
+                </AppText>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <View style={styles.panelShadow} />
+          <View style={styles.panelShadow} />
 
-      <View style={styles.formContainer}>
-        <View style={styles.titleContainer}>
-          <AppText variant="bold" style={styles.title}>
-            Create an account
-          </AppText>
-          <AppText style={styles.subtitle}>Get started for free.</AppText>
-        </View>
+          <View style={styles.formContainer}>
+            <View style={styles.titleContainer}>
+              <AppText variant="bold" style={styles.title}>
+                Create an account
+              </AppText>
+              <AppText style={styles.subtitle}>Get started for free.</AppText>
+            </View>
 
-        <View style={styles.inputGroup}>
-          <AppText style={styles.label}>Username</AppText>
-          <AppTextInputController
-            control={control}
-            name="username"
-            placeholder="Input Username"
-            rules={{
-              required: "Username is required",
-              minLength: {
-                value: 3,
-                message: "Username must be at least 3 characters",
-              },
-            }}
-          />
-        </View>
+            <View style={styles.inputGroup}>
+              <AppText style={styles.label}>First Name</AppText>
+              <AppTextInputController
+                control={control}
+                name="firstName"
+                placeholder="First  Name"
+                rules={{
+                  required: "First Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "First Name must be at least 3 characters",
+                  },
+                }}
+              />
+            </View>
 
-        <View style={styles.inputGroup}>
-          <AppText style={styles.label}>Password</AppText>
-          <AppTextInputController
-            control={control}
-            name="password"
-            placeholder="Password"
-            secureTextEntry
-            rules={{
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            }}
-          />
-        </View>
+            <View style={styles.inputGroup}>
+              <AppText style={styles.label}>Last Name</AppText>
+              <AppTextInputController
+                control={control}
+                name="lastName"
+                placeholder="Last Name"
+                rules={{
+                  required: "Last Name is required",
+                  minLength: {
+                    value: 2,
+                    message: "Password must be at least 2 characters",
+                  },
+                }}
+              />
+            </View>
 
-        <AppText style={styles.dividerText}>Or Sign up with</AppText>
+            <AppText style={styles.dividerText}>Or Sign up with</AppText>
 
-        <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
-          <GoogleLogo />
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
+              <GoogleLogo />
+            </TouchableOpacity>
 
-        <AppButton title="Create" onPress={handleSubmit(signUp)} />
-      </View>
+            <AppButton title="Next" onPress={handleSubmit(signUp)} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

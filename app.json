@@ -3,6 +3,7 @@
     "name": "Echo",
     "slug": "Echo",
     "version": "1.0.0",
+    "scheme": "echo",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,7 +29,8 @@
     },
     "plugins": [
       "expo-font",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      "expo-splash-screen"
     ]
   }
 }

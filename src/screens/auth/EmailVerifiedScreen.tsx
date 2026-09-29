@@ -7,7 +7,7 @@ import { vs } from "react-native-size-matters";
 import { useNavigation } from "@react-navigation/native";
 
 const EmailVerifiedScreen = () => {
-    const navigation = useNavigation<any>()
+  const navigation = useNavigation<any>();
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -15,7 +15,10 @@ const EmailVerifiedScreen = () => {
           source={require("../../assets/illustrations/emailVerifiedIllustration.png")}
           style={{ marginBottom: vs(60) }}
         />
-        <AppButton title="Continue" onPress={() => navigation.navigate("UploadProfilePic")}/>
+        <AppButton
+          title="Continue"
+          onPress={() => navigation.navigate("UploadProfilePic")}
+        />
       </View>
     </SafeAreaView>
   );

@@ -3,6 +3,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextStyle,
+  StyleProp,
+  ViewStyle,
 } from "react-native";
 import React, { FC } from "react";
 import AppText from "../texts/AppText";
@@ -14,8 +16,9 @@ interface AppButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
   backgroundColor?: string;
   textColor?: string;
+  style?: StyleProp<ViewStyle>;
   styleTitle?: TextStyle | TextStyle[];
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 const AppButton: FC<AppButtonProps> = ({
@@ -23,16 +26,30 @@ const AppButton: FC<AppButtonProps> = ({
   onPress,
   textColor = AppColors.white,
   backgroundColor = AppColors.primary,
+  style,
   styleTitle,
-  disabled = false
+  disabled = false,
 }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={[styles.container, { backgroundColor: backgroundColor }, disabled && styles.disabledContainer]}
+      style={[
+        styles.container,
+        { backgroundColor: backgroundColor },
+        disabled && styles.disabledContainer,
+        style,
+      ]}
     >
-      <AppText variant="bold" style={[styles.textTitle, { color: textColor },disabled && styles.disabledText, styleTitle]}>
+      <AppText
+        variant="bold"
+        style={[
+          styles.textTitle,
+          { color: textColor },
+          disabled && styles.disabledText,
+          styleTitle,
+        ]}
+      >
         {title}
       </AppText>
     </TouchableOpacity>
@@ -47,15 +64,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: s(10),
-    width: '100%'
+    width: "100%",
   },
   textTitle: {
-    fontSize: s(16)
+    fontSize: s(16),
   },
   disabledContainer: {
-    backgroundColor: AppColors.redGrey
+    backgroundColor: AppColors.redGrey,
   },
   disabledText: {
-    color: AppColors.textGrey
-  }
+    color: AppColors.textGrey,
+  },
 });

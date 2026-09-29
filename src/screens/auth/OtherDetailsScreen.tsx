@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,40 +15,43 @@ import AppButton from "../../components/buttons/AppButton";
 import AppText from "../../components/texts/AppText";
 import { AppColors } from "../../styles/colors";
 import { SharedPaddingHorizontal } from "../../styles/SharedStyles";
-import GoogleLogo from "../../assets/GoogleLogo";
-import AppTextInputController from "../../components/inputs/AppTextInputController";
 import { useForm } from "react-hook-form";
-import api from "../../api/axios";
-import { useAuth } from "../../contexts/AuthContext";
+import AppTextInputController from "../../components/inputs/AppTextInputController";
+import { ScrollView } from "react-native-gesture-handler";
+import { useOnboarding } from "../../contexts/OnboardingContext";
 
-type SignInFormData = {
-  email: string;
+type OtherDetailsFormData = {
+  username: string;
   password: string;
+  email: string;
 };
 
-const SignInScreen = () => {
+const OtherDetailsScreen = () => {
+  const { data, createAccount } = useOnboarding();
   const navigation = useNavigation<any>();
-  const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { control, handleSubmit } = useForm<SignInFormData>({
+  const { control, handleSubmit } = useForm<OtherDetailsFormData>({
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
+      email: "",
     },
   });
 
-  const logIn = async (formData: SignInFormData) => {
+  const onSubmit = async (formData: OtherDetailsFormData) => {
     try {
       setErrorMessage(null);
-      const res = await api.post("/users/login", formData);
-      const { user, accessToken } = res.data;
-      await login(user, accessToken);
-      navigation.navigate("MainAppBottomTabs");
-    } catch (err: any) {
-      console.log(err);
+      await createAccount(formData.username, formData.email, formData.password);
+      navigation.navigate("VerifyEmail");
+    } catch (e: any) {
+      console.log(
+        "Full error:",
+        e.response?.status,
+        e.response?.data ?? e.message,
+      );
       const message =
-        err?.response?.data?.message ?? "Login failed. Please try again.";
+        e.response?.data?.message ?? "Something went wrong. Please try again.";
       setErrorMessage(message);
     }
   };
@@ -57,7 +59,6 @@ const SignInScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={AppColors.primary} />
-
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -70,13 +71,13 @@ const SignInScreen = () => {
           <View style={styles.header}>
             <Image source={require("../../assets/Echo_Logo.png")} />
 
-            <View style={styles.signUpRow}>
-              <AppText style={styles.signUpText}>
-                Don't have an account?{" "}
+            <View style={styles.loginRow}>
+              <AppText style={styles.loginText}>
+                Already have an account?{" "}
               </AppText>
-              <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                <AppText variant="bold" style={styles.signUpText}>
-                  Sign up
+              <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
+                <AppText variant="bold" style={styles.loginText}>
+                  Log In
                 </AppText>
               </TouchableOpacity>
             </View>
@@ -87,9 +88,11 @@ const SignInScreen = () => {
           <View style={styles.formContainer}>
             <View style={styles.titleContainer}>
               <AppText variant="bold" style={styles.title}>
-                Welcome back
+                Other Details
               </AppText>
-              <AppText style={styles.subtitle}>Log in to your account</AppText>
+              <AppText style={styles.subtitle}>
+                Input Username and Password
+              </AppText>
             </View>
 
             {errorMessage && (
@@ -97,17 +100,16 @@ const SignInScreen = () => {
             )}
 
             <View style={styles.inputGroup}>
-              <AppText style={styles.label}>Email</AppText>
+              <AppText style={styles.label}>Username</AppText>
               <AppTextInputController
                 control={control}
-                name="email"
-                placeholder="Email"
-                keyboardType="email-address"
+                name="username"
+                placeholder="The_Logical_Creative"
                 rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email address",
+                  required: "Username is required",
+                  minLength: {
+                    value: 3,
+                    message: "Username must be at least 3 characters",
                   },
                 }}
               />
@@ -130,13 +132,24 @@ const SignInScreen = () => {
               />
             </View>
 
-            <AppText style={styles.dividerText}>Or Log in with</AppText>
+            <View style={styles.inputGroup}>
+              <AppText style={styles.label}>Email</AppText>
+              <AppTextInputController
+                control={control}
+                name="email"
+                placeholder="example@example.com"
+                keyboardType="email-address"
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                  },
+                }}
+              />
+            </View>
 
-            <TouchableOpacity style={styles.googleButton} activeOpacity={0.8}>
-              <GoogleLogo />
-            </TouchableOpacity>
-
-            <AppButton title="Log In" onPress={handleSubmit(logIn)} />
+            <AppButton title="Next" onPress={handleSubmit(onSubmit)} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -144,7 +157,7 @@ const SignInScreen = () => {
   );
 };
 
-export default SignInScreen;
+export default OtherDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -156,22 +169,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
   },
-  logoText: {
-    color: AppColors.white,
-    fontSize: s(34),
-    marginBottom: vs(20),
-  },
-  signUpRow: {
+  loginRow: {
     flexDirection: "row",
     alignItems: "center",
   },
-  signUpText: {
+  loginText: {
     color: AppColors.white,
     fontSize: s(14),
   },
   panelShadow: {
     position: "absolute",
-    top: vs(190),
+    top: vs(235),
     alignSelf: "center",
     width: "86%",
     height: vs(60),
@@ -184,7 +192,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: s(28),
     borderTopRightRadius: s(28),
     paddingHorizontal: SharedPaddingHorizontal,
-    paddingVertical: vs(30),
+    paddingVertical: vs(20),
   },
   titleContainer: {
     alignItems: "center",
@@ -212,22 +220,6 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: vs(10),
     fontSize: s(14),
-    color: AppColors.textGrey,
-  },
-  dividerText: {
-    marginTop: vs(4),
-    marginBottom: vs(18),
-    textAlign: "center",
-    fontSize: s(12),
-    color: AppColors.textGrey,
-  },
-  googleButton: {
-    height: vs(48),
-    borderWidth: 1,
-    borderColor: "#E6E6E6",
-    borderRadius: s(8),
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: vs(18),
+    color: AppColors.black,
   },
 });
